@@ -1,0 +1,4 @@
+.DS_Store
+.idea
+website/css/*.css
+website/css/*.css.map

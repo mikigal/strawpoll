@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Strawpoll</title>
+    <link rel="stylesheet" href="css/main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
+</head>
+<body>
+<div id="content-poll" class="z-depth-4">
+    <div id="answers">
+        <h1>Vote!</h1>
+        <form autocomplete="off" method="post" action="/vote">
+            {% for answer in AvailableAnswers %}
+                <div>
+                    <label>
+                        <input type="radio" name="answer" class="with-gap" value="{{ answer }}" required/>
+                        <span>{{ answer }}</span>
+                    </label>
+                </div>
+            {% endfor %}
+
+            <input type="hidden" name="id" value="{{ id }}">
+            <div id="submit-wrapper">
+                <input class="waves-effect waves-light btn" type="submit" value="SUBMIT">
+            </div>
+        </form>
+
+        {% if (error == "1") %}
+            <p id="error">
+                You already voted in this poll!
+            </p>
+        {% endif %}
+    </div>
+    <div id="separator"></div>
+    <div id="chart">
+        <h1>Results</h1>
+        <div id="chart-content">
+            <canvas id="chart-canvas"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+<script>
+    let colors = {
+        red: 'rgb(255, 99, 132)',
+        orange: 'rgb(255, 159, 64)',
+        yellow: 'rgb(255, 205, 86)',
+        green: 'rgb(75, 192, 192)',
+        blue: 'rgb(54, 162, 235)',
+        purple: 'rgb(153, 102, 255)',
+        light_green: 'rgb(153,180,51)',
+        magenta: 'rgb(255,0,151)',
+        dark_purple: 'rgb(96,60,186)',
+        teal: 'rgb(0,171,169)',
+    };
+
+    let chart = new Chart(document.getElementById("chart-canvas"), {
+        type: 'pie',
+        data: {
+            datasets: [{
+                data: [
+
+                ],
+                backgroundColor: [
+                    colors.red,
+                    colors.orange,
+                    colors.yellow,
+                    colors.green,
+                    colors.blue,
+                    colors.purple,
+                    colors.light_green,
+                    colors.magenta,
+                    colors.dark_purple,
+                    colors.teal
+                ],
+
+                label: 'Answers'
+            }],
+            labels: [
+                //{% for answer in AvailableAnswers %} GoLand has cancer and report Django code without comment as JS syntax error ;-;
+                    '{{answer}}',
+                //{% endfor %}
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                display: false
+            }
+        }
+    });
+
+    function update() {
+        $.ajax({
+            type: 'GET',
+            url: '/rest/{{ id }}',
+            success: function (data) {
+                updateChart(data);
+                setTimeout(update, 3000);
+            }
+        });
+    }
+
+    function updateChart(json) {
+        let data = [];
+
+        json.available_answers.forEach(function (answer) {
+            var name = answer.toString();
+            data.push(json.answer_amount[name]);
+        });
+
+        chart.data.datasets[0].data = data;
+        chart.update();
+    }
+
+    $(document).ready(update());
+</script>
+
+</body>
+</html>

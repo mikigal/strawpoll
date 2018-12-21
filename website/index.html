@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
+    <title>Strawpoll</title>
+</head>
+
+<!-- https://materializecss.com/text-inputs.html -->
+<body>
+<div id="content" class="z-depth-4">
+    <h1>Polls</h1>
+
+    <form autocomplete="off" method="post" action="/create">
+        <div class="input-field" style="margin-top: 0;">
+            <input id="question" type="text" class="validate" name="question" required>
+            <label for="question">Your Question</label>
+        </div>
+
+        <div id="answers-wrapper">
+            <div class="input-field" id="wrapper-answer1">
+                <input id="answer1" type="text" class="validate answer" name="answer1">
+                <label for="answer1">Poll option</label>
+            </div>
+
+            <div class="input-field" id="wrapper-answer2">
+                <input id="answer2" type="text" class="validate answer" name="answer2">
+                <label for="answer2">Poll option</label>
+            </div>
+
+            <div class="input-field" id="wrapper-answer3">
+                <input id="answer3" type="text" class="validate answer" name="answer3">
+                <label for="answer3">Poll option</label>
+            </div>
+        </div>
+
+
+        <div class="ip">
+            <label>
+                <input type="checkbox" class="filled-in" checked="checked" name="check_duplication"/>
+                <span>IP Duplication Checking</span>
+            </label>
+        </div>
+
+        <input type="hidden" name="answers-amount" id="answers-amount" value="3">
+        <input class="waves-effect waves-light btn" type="submit" value="SUBMIT">
+    </form>
+
+    {% if (error == "1") %}
+        <p id="error">
+            You must write at least 2 answers!
+        </p>
+    {% endif %}
+
+    {% if (error == "2") %}
+        <p id="error">
+            Answers and question must be longer than 2 chars!
+        </p>
+    {% endif %}
+
+    {% if (error == "3") %}
+        <p id="error">
+            Answers must be unique!
+        </p>
+    {% endif %}
+
+    {% if (error == "4") %}
+        <p id="error">
+            You can't create more than 10 answers!
+        </p>
+    {% endif %}
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
